@@ -1,0 +1,18 @@
+{
+  "name": "fbs_backend",
+  "version": "1.0.0",
+  "description": "Backend API for providing blog posts to UI",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ethan Fox",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/firestore": "^1.0.1",
+    "@types/node": "^10.12.24",
+    "express": "^4.16.4",
+    "firebase": "^5.8.2",
+    "mongodb": "^3.1.13"
+  }
+}
