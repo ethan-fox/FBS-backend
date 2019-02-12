@@ -1,18 +1,25 @@
 {
   "name": "fbs_backend",
   "version": "1.0.0",
-  "description": "Backend API for providing blog posts to UI",
-  "main": "src/index.ts",
+  "description": "",
+  "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Ethan Fox",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethan-fox/FBS_backend.git"
+  },
+  "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ethan-fox/FBS_backend/issues"
+  },
+  "homepage": "https://github.com/ethan-fox/FBS_backend#readme",
   "dependencies": {
-    "@google-cloud/firestore": "^1.0.1",
-    "@types/node": "^10.12.24",
+    "axios": "^0.18.0",
     "express": "^4.16.4",
-    "firebase": "^5.8.2",
     "mongodb": "^3.1.13"
   }
 }
