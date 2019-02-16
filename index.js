@@ -2,26 +2,39 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId; 
+const logger = require('logger').createLogger();
 
-var mongoConnectionUrl = 'mongodb://localhost:27017';
-var mongoDbName = 'FBS_test_db';
+// Logger setup
+logger.setLevel('debug');
 
-const mongoClient = new MongoClient(mongoConnectionUrl);
+// MongoDB setup
+const mongoConnectionUrl = 'mongodb://localhost:27017';
+const mongoDbName = 'FBS_test_db';
+const mongoClient = new MongoClient(mongoConnectionUrl, { useNewUrlParser: true });
+var collection, mongoDataBase;
 
+// Express setup
 var app = express();
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-app.use(bodyParser.text());
+app.use(bodyParser.text()); // for parsing plain text (in this app: markdown)
+app.use(function (req, res, next) { // this is the only way to fix the CORS issue :(
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 app.get('/', function (req, res) {
+
+    logger.info('GET /');
+
     res.status(200).send({ 'message': 'You\'ve hit the root endpoint of this API. Nothing is here!' });
 });
 
 app.get('/getAllArticleIDs', async function (req, res) {
-    let mongoDataBase = mongoClient.db(mongoDbName);
 
-    let collection = mongoDataBase.collection('articles');
+    logger.info('GET /getAllArticleIDs')
 
     await collection.find({}).toArray()
         .then(data => {
@@ -34,22 +47,19 @@ app.get('/getAllArticleIDs', async function (req, res) {
 });
 
 app.post('/getArticleByID', async function(req, res) {
-    let mongoDataBase = mongoClient.db(mongoDbName);
 
-    let collection = mongoDataBase.collection('articles');
+    logger.info('POST /getArticleByID')
 
-    await collection.find(ObjectId(req.body._id)).toArray()
+    await collection.find(ObjectId(req.body.id)).toArray()
         .then(data => {
-            console.log(data);
+            logger.debug(data);
             res.send(data[0]);
         });
 });
 
 app.post('/postArticle', async function (req, res) {
 
-    let mongoDataBase = mongoClient.db(mongoDbName);
-
-    let collection = mongoDataBase.collection('articles');
+    logger.info('POST /postArticle')
 
     let postBody = {
         title: req.query.title,
@@ -83,13 +93,11 @@ app.post('/postArticle', async function (req, res) {
 
 app.delete('/deleteArticle', async function (req, res) {
 
-    let mongoDataBase = mongoClient.db(mongoDbName);
-
-    let collection = mongoDataBase.collection('articles');
+    logger.info('DELETE /deleteArticle')
 
     await collection.deleteOne(req.body, async function (err, result) {
 
-        console.log(req.body)
+        // console.log(req.body)
         let statusCode, resMessage
         
         if(err){ 
@@ -109,22 +117,16 @@ app.delete('/deleteArticle', async function (req, res) {
         });
     });
 });
-    // mongoClient.connect(async function (err) {
-    //     if (err) {
-    //         console.log(err);
-    //     }
-
-    //     console.log("Connected successfully to DB server");
-
-    //     let mongoDataBase = mongoClient.db(mongoDbName);
-
-    //     // mongoClient.close();
-    // });
 
 var listen_port = process.env.PORT || 8080;
 
 var server = app.listen(listen_port, async function () {
     await mongoClient.connect();
+
+    mongoDataBase = mongoClient.db(mongoDbName);
+
+    collection = mongoDataBase.collection('articles');
+
     var port = server.address().port;
-    console.log('FBS backend listening on port %s', port);
+    logger.info('FBS backend listening on port', port);
 });

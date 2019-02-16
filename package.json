@@ -19,7 +19,10 @@
   "homepage": "https://github.com/ethan-fox/FBS-backend#readme",
   "dependencies": {
     "axios": "^0.18.0",
+    "datejs": "^1.0.0-rc3",
     "express": "^4.16.4",
-    "mongodb": "^3.1.13"
+    "logger": "0.0.1",
+    "mongodb": "^3.1.13",
+    "mongoose": "^5.4.13"
   }
 }
