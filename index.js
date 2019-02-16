@@ -52,7 +52,6 @@ app.post('/getArticleByID', async function(req, res) {
 
     await collection.find(ObjectId(req.body.id)).toArray()
         .then(data => {
-            logger.debug(data);
             res.send(data[0]);
         });
 });
@@ -71,7 +70,7 @@ app.post('/postArticle', async function (req, res) {
         
         let statusCode, resBody;
         if(err){
-            console.log("ERROR:",err)
+            logger.error("ERROR:",err)
             statusCode = 500
             resBody = {
                 'message': 'Could not post article.',
@@ -79,7 +78,7 @@ app.post('/postArticle', async function (req, res) {
             }
             
         }else{
-            console.log('Inserted Doc into collection');
+            logger.debug('Inserted Doc into collection');
             statusCode = 201
             resBody = {
                 'message': 'Successfully posted article.',
@@ -97,18 +96,17 @@ app.delete('/deleteArticle', async function (req, res) {
 
     await collection.deleteOne(req.body, async function (err, result) {
 
-        // console.log(req.body)
         let statusCode, resMessage
         
         if(err){ 
-            console.log("ERROR:", err)
+            logger.error("ERROR:", err)
             statusCode = 500;
             resMessage = 'Could not remove article'
         }else if (result.deletedCount === 0){
             statusCode = 400;
             resMessage = 'Article does not exist'
         }else{
-            console.log('Removed Doc from collection')
+            logger.debug('Removed Doc from collection')
             statusCode = 200;
             resMessage = 'Successfully deleted article'
         }
